@@ -31,10 +31,10 @@ jobs:
         python-version: [3.8]
 
     steps:
-    - uses: UrodaMarek/actions/clean-workspace@main
+    - uses: Cryptomines-Network/actions/clean-workspace@main
 
     - name: Add safe git directory
-      uses: UrodaMarek/actions/git-mark-workspace-safe@main
+      uses: Cryptomines-Network/actions/git-mark-workspace-safe@main
 
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
         fetch-depth: 0
         submodules: recursive
 
-    - uses: UrodaMarek/actions/git-ssh-to-https@main
+    - uses: Cryptomines-Network/actions/git-ssh-to-https@main
 
     - name: Cleanup any leftovers that exist from previous runs
       run: bash build_scripts/clean-runner.sh || true

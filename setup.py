@@ -154,8 +154,8 @@ kwargs = dict(
     long_description_content_type="text/markdown",
     zip_safe=False,
     project_urls={
-        "Source": "https://github.com/UrodaMarek/cryptomines-blockchain/",
-        "Changelog": "https://github.com/UrodaMarek/cryptomines-blockchain/blob/main/CHANGELOG.md",
+        "Source": "https://github.com/Cryptomines-Network/cryptomines-blockchain/",
+        "Changelog": "https://github.com/Cryptomines-Network/cryptomines-blockchain/blob/main/CHANGELOG.md",
     },
 )
 
