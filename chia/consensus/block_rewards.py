@@ -78,7 +78,7 @@ def create_withdrawals(
                 next_wd_index,
                 uint64(1),
                 curr.coinbase,
-                _calculate_v3_reward(curr.height, constants.V2_EOL_HEIGHT),
+                _calculate_v3_reward(curr.height + 1),
             )
         )
         next_wd_index += 1
@@ -92,28 +92,21 @@ def create_withdrawals(
     return withdrawals
 
 def _calculate_v3_reward(
-    v3_height: uint64,
-    v2_eol_height: uint64,
+    v3_height: uint64 
 ) -> uint64:
-    v2_equiv_height = v2_eol_height + v3_height + 1
-    return _calculate_v2_reward(v2_equiv_height)
-
-def _calculate_v2_reward(
-    v2_height: uint64
-) -> uint64:
-    if v2_height == 0:
+    if v3_height == 0:
         return uint64(20000000 * _mojo_per_chia)
-    elif v2_height < 1000000:
+    elif v3_height < 1000000:
         return uint64(200 * _mojo_per_chia)
-    elif v2_height < 1000000 + (3 * _blocks_per_year):
+    elif v3_height < 1000000 + (3 * _blocks_per_year):
         return uint64(20 * _mojo_per_chia)
-    elif v2_height < 1000000 + (6 * _blocks_per_year):
+    elif v3_height < 1000000 + (6 * _blocks_per_year):
         return uint64(10 * _mojo_per_chia)
-    elif v2_height < 1000000 + (9 * _blocks_per_year):
+    elif v3_height < 1000000 + (9 * _blocks_per_year):
         return uint64(5 * _mojo_per_chia)
-    elif v2_height < 1000000 + (12 * _blocks_per_year):
+    elif v3_height < 1000000 + (12 * _blocks_per_year):
         return uint64(2.5 * _mojo_per_chia)
-    elif v2_height < 1000000 + (15 * _blocks_per_year):
+    elif v3_height < 1000000 + (15 * _blocks_per_year):
         return uint64(1.25 * _mojo_per_chia)
     else:
         return uint64(0)

@@ -481,6 +481,7 @@ class FullNodeRpcApi:
                     block.reward_chain_sp_proof,
                     block.foliage,
                     block.foliage_transaction_block,
+                    block.execution_payload,
                     b"",
                 )
                 response_headers.append(unfinished_header_block)

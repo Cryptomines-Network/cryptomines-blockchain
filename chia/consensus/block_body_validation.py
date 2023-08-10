@@ -30,6 +30,7 @@ from chia.util.errors import Err
 from chia.util.generator_tools import tx_removals_and_additions
 from chia.util.hash import std_hash
 from chia.util.ints import uint32, uint64
+from chia.full_node.execution_client import ExecutionClient
 
 log = logging.getLogger(__name__)
 

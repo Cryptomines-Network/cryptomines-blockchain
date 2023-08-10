@@ -64,7 +64,7 @@ def create_foliage(
 
     Args:
         constants: consensus constants being used for this chain
-        execution_client: execution client instance
+        execution_client: evm client instance
         reward_block_unfinished: the reward block to look at, potentially at the signage point
         block_generator: transactions to add to the foliage block, if created
         aggregate_sig: aggregate of all transactions (or infinity element)
@@ -321,7 +321,7 @@ def create_unfinished_block(
 
     Args:
         constants: consensus constants being used for this chain
-        execution_client: execution client instance
+        execution_client: evm client instance
         sub_slot_start_total_iters: the starting sub-slot iters at the signage point sub-slot
         sub_slot_iters: sub-slot-iters at the infusion point epoch
         signage_point_index: signage point index of the block to create

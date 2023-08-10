@@ -197,7 +197,7 @@ class ExecutionClient:
                 "../execution/" + selected_network + "/geth/jwtsecret"
             )
         
-        log.info(f"Initializing execution client connection: {ec_config['host']}:{ec_config['port']} using JWT secret {secret_path}")
+        log.info(f"Initializing evm client connection: {ec_config['host']}:{ec_config['port']} using JWT secret {secret_path}")
 
         try:
             secret_file = open(secret_path, 'r')
@@ -205,7 +205,7 @@ class ExecutionClient:
             secret_file.close()
         except Exception as e:
             log.error(f"Exception in Web3 init: {e}")
-            raise RuntimeError("Cannot open JWT secret file. Execution client is not running or needs more time to start")
+            raise RuntimeError("Cannot open JWT secret file. Evm client is not running or needs more time to start")
         
         self.w3 = Web3(
             HTTPAuthProvider(
@@ -218,7 +218,7 @@ class ExecutionClient:
             "engine": EngineModule
         })
 
-        log.info("Initialized execution client connection")
+        log.info("Initialized evm client connection")
     
     
     async def _forkchoice_update(

@@ -42,7 +42,7 @@ from chia.types.block_protocol import BlockInfo
 from chia.types.blockchain_format.coin import Coin, hash_coin_ids
 from chia.types.blockchain_format.pool_target import PoolTarget
 from chia.types.blockchain_format.proof_of_space import verify_and_get_quality_string
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
 from chia.types.blockchain_format.sub_epoch_summary import SubEpochSummary
 from chia.types.coin_record import CoinRecord
 from chia.types.end_of_slot_bundle import EndOfSubSlotBundle
@@ -892,6 +892,7 @@ class FullNodeAPI:
             self.log.info("Starting to make the unfinished block")
             unfinished_block: UnfinishedBlock = create_unfinished_block(
                 self.full_node.constants,
+                self.full_node.execution_client,
                 total_iters_pos_slot,
                 sub_slot_iters,
                 request.signage_point_index,
@@ -948,6 +949,7 @@ class FullNodeAPI:
                     cc_challenge_hash,
                     farmer_ph,
                     pool_target,
+                    bytes20.from_hexstr(self.full_node.config["coinbase"]),
                     get_plot_sig,
                     get_pool_sig,
                     sp_vdfs,
