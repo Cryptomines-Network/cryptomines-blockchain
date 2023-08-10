@@ -10,6 +10,7 @@ from chia.types.blockchain_format.vdf import VDFProof
 from chia.types.end_of_slot_bundle import EndOfSubSlotBundle
 from chia.util.ints import uint32
 from chia.util.streamable import Streamable, streamable
+from chia.types.blockchain_format.execution_payload import ExecutionPayloadV2
 
 
 @streamable
@@ -27,6 +28,7 @@ class UnfinishedBlock(Streamable):
     transactions_generator_ref_list: List[
         uint32
     ]  # List of block heights of previous generators referenced in this block
+    execution_payload: Optional[ExecutionPayloadV2]
 
     @property
     def prev_header_hash(self):

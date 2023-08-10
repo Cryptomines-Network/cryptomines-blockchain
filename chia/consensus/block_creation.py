@@ -23,7 +23,7 @@ from chia.types.blockchain_format.foliage import Foliage, FoliageBlockData, Foli
 from chia.types.blockchain_format.pool_target import PoolTarget
 from chia.types.blockchain_format.proof_of_space import ProofOfSpace
 from chia.types.blockchain_format.reward_chain_block import RewardChainBlock, RewardChainBlockUnfinished
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
 from chia.types.blockchain_format.vdf import VDFInfo, VDFProof
 from chia.types.end_of_slot_bundle import EndOfSubSlotBundle
 from chia.types.full_block import FullBlock
@@ -33,12 +33,14 @@ from chia.util.hash import std_hash
 from chia.util.ints import uint8, uint32, uint64, uint128
 from chia.util.prev_transaction_block import get_prev_transaction_block
 from chia.util.recursive_replace import recursive_replace
+from chia.full_node.execution_client import ExecutionClient
 
 log = logging.getLogger(__name__)
 
 
 def create_foliage(
     constants: ConsensusConstants,
+    execution_client: ExecutionClient,
     reward_block_unfinished: RewardChainBlockUnfinished,
     block_generator: Optional[BlockGenerator],
     aggregate_sig: G2Element,
@@ -48,6 +50,7 @@ def create_foliage(
     blocks: BlockchainInterface,
     total_iters_sp: uint128,
     timestamp: uint64,
+    coinbase: bytes20,
     farmer_reward_puzzlehash: bytes32,
     pool_target: PoolTarget,
     get_plot_signature: Callable[[bytes32, G1Element], G2Element],
@@ -61,6 +64,7 @@ def create_foliage(
 
     Args:
         constants: consensus constants being used for this chain
+        execution_client: execution client instance
         reward_block_unfinished: the reward block to look at, potentially at the signage point
         block_generator: transactions to add to the foliage block, if created
         aggregate_sig: aggregate of all transactions (or infinity element)
@@ -68,6 +72,7 @@ def create_foliage(
         blocks: dict from header hash to blocks, of all ancestor blocks
         total_iters_sp: total iters at the signage point
         timestamp: timestamp to put into the foliage block
+        coinbase: where to pay out farmer rewards
         farmer_reward_puzzlehash: where to pay out farming reward
         pool_target: where to pay out pool reward
         get_plot_signature: retrieve the signature corresponding to the plot public key
@@ -80,10 +85,14 @@ def create_foliage(
         res = get_prev_transaction_block(prev_block, blocks, total_iters_sp)
         is_transaction_block: bool = res[0]
         prev_transaction_block: Optional[BlockRecord] = res[1]
+        execution_payload = execution_client.get_payload(prev_transaction_block)
+        execution_block_hash = execution_payload.blockHash
     else:
         # Genesis is a transaction block
         prev_transaction_block = None
         is_transaction_block = True
+        execution_payload = None
+        execution_block_hash = constants.GENESIS_EXECUTION_BLOCK_HASH
 
     random.seed(seed)
     # Use the extension data to create different blocks based on header hash
@@ -104,6 +113,7 @@ def create_foliage(
 
     foliage_data = FoliageBlockData(
         reward_block_unfinished.get_hash(),
+        coinbase,
         pool_target,
         pool_target_signature,
         farmer_reward_puzzlehash,
@@ -247,6 +257,7 @@ def create_foliage(
         foliage_transaction_block: Optional[FoliageTransactionBlock] = FoliageTransactionBlock(
             prev_transaction_block_hash,
             timestamp,
+            execution_block_hash,
             filter_hash,
             additions_root,
             removals_root,
@@ -275,11 +286,12 @@ def create_foliage(
         foliage_transaction_block_signature,
     )
 
-    return foliage, foliage_transaction_block, transactions_info
+    return foliage, foliage_transaction_block, transactions_info, execution_payload
 
 
 def create_unfinished_block(
     constants: ConsensusConstants,
+    execution_client: ExecutionClient,
     sub_slot_start_total_iters: uint128,
     sub_slot_iters: uint64,
     signage_point_index: uint8,
@@ -287,6 +299,7 @@ def create_unfinished_block(
     ip_iters: uint64,
     proof_of_space: ProofOfSpace,
     slot_cc_challenge: bytes32,
+    coinbase: bytes20,
     farmer_reward_puzzle_hash: bytes32,
     pool_target: PoolTarget,
     get_plot_signature: Callable[[bytes32, G1Element], G2Element],
@@ -308,6 +321,7 @@ def create_unfinished_block(
 
     Args:
         constants: consensus constants being used for this chain
+        execution_client: execution client instance
         sub_slot_start_total_iters: the starting sub-slot iters at the signage point sub-slot
         sub_slot_iters: sub-slot-iters at the infusion point epoch
         signage_point_index: signage point index of the block to create
@@ -315,6 +329,7 @@ def create_unfinished_block(
         ip_iters: ip_iters of the block to create
         proof_of_space: proof of space of the block to create
         slot_cc_challenge: challenge hash at the sp sub-slot
+        coinbase: where to pay out farmer rewards
         farmer_reward_puzzle_hash: where to pay out farmer rewards
         pool_target: where to pay out pool rewards
         get_plot_signature: function that returns signature corresponding to plot public key
@@ -333,6 +348,9 @@ def create_unfinished_block(
     Returns:
 
     """
+    if coinbase == bytes20.fromhex("0000000000000000000000000000000000000000"):
+        raise RuntimeError("Coinbase not set! Farming not possible!")
+
     if finished_sub_slots_input is None:
         finished_sub_slots: List[EndOfSubSlotBundle] = []
     else:
@@ -388,8 +406,9 @@ def create_unfinished_block(
         additions = []
     if removals is None:
         removals = []
-    (foliage, foliage_transaction_block, transactions_info,) = create_foliage(
+    (foliage, foliage_transaction_block, transactions_info, execution_payload) = create_foliage(
         constants,
+        execution_client,
         rc_block,
         block_generator,
         aggregate_sig,
@@ -399,6 +418,7 @@ def create_unfinished_block(
         blocks,
         total_iters_sp,
         timestamp,
+        coinbase,
         farmer_reward_puzzle_hash,
         pool_target,
         get_plot_signature,
@@ -413,6 +433,7 @@ def create_unfinished_block(
         foliage,
         foliage_transaction_block,
         transactions_info,
+        execution_payload,
         block_generator.program if block_generator else None,
         block_generator.block_height_list if block_generator else [],
     )
@@ -458,6 +479,7 @@ def unfinished_block_to_full_block(
         new_height = uint32(0)
         new_foliage = unfinished_block.foliage
         new_foliage_transaction_block = unfinished_block.foliage_transaction_block
+        new_execution_payload = unfinished_block.execution_payload
         new_tx_info = unfinished_block.transactions_info
         new_generator = unfinished_block.transactions_generator
         new_generator_ref_list = unfinished_block.transactions_generator_ref_list
@@ -469,6 +491,7 @@ def unfinished_block_to_full_block(
             new_fbh = unfinished_block.foliage.foliage_transaction_block_hash
             new_fbs = unfinished_block.foliage.foliage_transaction_block_signature
             new_foliage_transaction_block = unfinished_block.foliage_transaction_block
+            new_execution_payload = unfinished_block.execution_payload
             new_tx_info = unfinished_block.transactions_info
             new_generator = unfinished_block.transactions_generator
             new_generator_ref_list = unfinished_block.transactions_generator_ref_list
@@ -476,6 +499,7 @@ def unfinished_block_to_full_block(
             new_fbh = None
             new_fbs = None
             new_foliage_transaction_block = None
+            new_execution_payload = None
             new_tx_info = None
             new_generator = None
             new_generator_ref_list = []
@@ -511,6 +535,7 @@ def unfinished_block_to_full_block(
         icc_ip_proof,
         new_foliage,
         new_foliage_transaction_block,
+        new_execution_payload,
         new_tx_info,
         new_generator,
         new_generator_ref_list,

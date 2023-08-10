@@ -36,6 +36,7 @@ log = logging.getLogger(__name__)
 
 async def validate_block_body(
     constants: ConsensusConstants,
+    execution_client: ExecutionClient,
     blocks: BlockchainInterface,
     block_store: BlockStore,
     coin_store: CoinStore,
@@ -59,6 +60,20 @@ async def validate_block_body(
     if isinstance(block, FullBlock):
         assert height == block.height
     prev_transaction_block_height: uint32 = uint32(0)
+
+    if block.execution_payload is None:
+        return None
+
+    status = await execution_client.new_payload(block.execution_payload)
+
+    if status == "INVALID":
+        return Err.EXECUTION_INVALID_PAYLOAD
+    elif status == "SYNCING":
+        return Err.EXECUTION_SYNCING
+    elif status == "ACCEPTED":
+        log.warning(f"Execution chain reorg at height {block.height}!")
+    elif status != "VALID":
+        return Err.UNKNOWN
 
     # 1. For non transaction-blocs: foliage block, transaction filter, transactions info, and generator must
     # be empty. If it is a block but not a transaction block, there is no body to validate. Check that all fields are
