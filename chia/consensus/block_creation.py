@@ -535,10 +535,10 @@ def unfinished_block_to_full_block(
         icc_ip_proof,
         new_foliage,
         new_foliage_transaction_block,
-        new_execution_payload,
         new_tx_info,
         new_generator,
         new_generator_ref_list,
+        new_execution_payload,
     )
     ret = recursive_replace(
         ret,
