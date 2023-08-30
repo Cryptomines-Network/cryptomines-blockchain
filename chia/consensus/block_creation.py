@@ -257,11 +257,11 @@ def create_foliage(
         foliage_transaction_block: Optional[FoliageTransactionBlock] = FoliageTransactionBlock(
             prev_transaction_block_hash,
             timestamp,
-            execution_block_hash,
             filter_hash,
             additions_root,
             removals_root,
             transactions_info.get_hash(),
+            execution_block_hash,
         )
         assert foliage_transaction_block is not None
 
