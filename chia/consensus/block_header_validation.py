@@ -930,6 +930,7 @@ def validate_finished_header_block(
         header_block.foliage,
         header_block.foliage_transaction_block,
         header_block.transactions_filter,
+        header_block.execution_payload,
     )
 
     required_iters, validate_unfinished_err = validate_unfinished_header_block(
