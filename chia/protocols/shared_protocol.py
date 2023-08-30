@@ -45,7 +45,7 @@ class Handshake(Streamable):
 # "1" means capability is enabled
 capabilities = [
     (uint16(Capability.BASE.value), "1"),
-    (uint16(Capability.BLOCK_HEADERS.value), "1"),
+    (uint16(Capability.BLOCK_HEADERS.value), "0"),
     (uint16(Capability.RATE_LIMITS_V2.value), "1"),
     # (uint16(Capability.NONE_RESPONSE.value), "1"), # capability removed but functionality is still supported
 ]
