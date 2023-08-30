@@ -433,9 +433,9 @@ def create_unfinished_block(
         foliage,
         foliage_transaction_block,
         transactions_info,
-        execution_payload,
         block_generator.program if block_generator else None,
         block_generator.block_height_list if block_generator else [],
+        execution_payload,
     )
 
 
