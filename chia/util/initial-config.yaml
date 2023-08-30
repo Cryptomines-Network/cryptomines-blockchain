@@ -16,6 +16,7 @@ network_overrides: &network_overrides
       GENESIS_CHALLENGE: 3c69080dc9cf008c83799ec194c98520225a70e1a1a924e266b8c0f86d7f2152
       GENESIS_PRE_FARM_POOL_PUZZLE_HASH: "fc444b5d011c6cf10407b8fef0e1b1c5cde122ffcb9c08e20a923d9150f6fa2c"
       GENESIS_PRE_FARM_FARMER_PUZZLE_HASH: "fc444b5d011c6cf10407b8fef0e1b1c5cde122ffcb9c08e20a923d9150f6fa2c"
+      GENESIS_EXECUTION_BLOCK_HASH: d059dd30e5dcc44733c6c629736ae2dcbec87e3777f61e74fdaf682fd65381d1
     testnet0:
       MIN_PLOT_SIZE: 18
       GENESIS_CHALLENGE: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
@@ -427,6 +428,9 @@ full_node:
   wallet_peer:
     host: *self_hostname
     port: 44416
+  execution_client:
+    host: *self_hostname
+    port: 4451
   logging: *logging
   network_overrides: *network_overrides
   selected_network: *selected_network
@@ -440,6 +444,8 @@ full_node:
     private_key:  "config/ssl/full_node/private_full_node.key"
     public_crt:  "config/ssl/full_node/public_full_node.crt"
     public_key:  "config/ssl/full_node/public_full_node.key"
+
+  coinbase: "0x0000000000000000000000000000000000000000"
 
 ui:
    # The ui node server (if run) will run on this port

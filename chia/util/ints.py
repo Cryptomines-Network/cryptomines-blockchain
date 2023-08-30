@@ -47,6 +47,10 @@ class uint64(StructStream):
 class uint128(StructStream):
     pass
 
+# Required for ExecutionPayload
+@parse_metadata_from_name
+class uint256(StructStream):
+    pass
 
 class int512(StructStream):
     PACK = None

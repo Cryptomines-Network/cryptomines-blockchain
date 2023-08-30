@@ -4,7 +4,7 @@ import dataclasses
 import logging
 from typing import Any
 
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
 from chia.util.byte_types import hexstr_to_bytes
 from chia.util.ints import uint8, uint32, uint64, uint128
 
@@ -62,6 +62,8 @@ class ConsensusConstants:
     MAX_GENERATOR_REF_LIST_SIZE: uint32
     POOL_SUB_SLOT_ITERS: uint64
     SOFT_FORK_HEIGHT: uint32
+
+    GENESIS_EXECUTION_BLOCK_HASH: bytes32
 
     def replace(self, **changes: object) -> "ConsensusConstants":
         return dataclasses.replace(self, **changes)

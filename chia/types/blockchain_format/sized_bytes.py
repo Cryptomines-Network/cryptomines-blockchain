@@ -10,6 +10,9 @@ class bytes4(SizedBytes):
 class bytes8(SizedBytes):
     _size = 8
 
+# Required for ExecutionPayload
+class bytes20(SizedBytes):
+    _size = 20
 
 class bytes32(SizedBytes):
     _size = 32
@@ -26,6 +29,9 @@ class bytes96(SizedBytes):
 class bytes100(SizedBytes):
     _size = 100
 
+# Required for ExecutionPayload
+class bytes256(SizedBytes):
+    _size = 256
 
 class bytes480(SizedBytes):
     _size = 480

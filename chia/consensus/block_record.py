@@ -7,7 +7,7 @@ from chia.consensus.constants import ConsensusConstants
 from chia.consensus.pot_iterations import calculate_ip_iters, calculate_sp_iters
 from chia.types.blockchain_format.classgroup import ClassgroupElement
 from chia.types.blockchain_format.coin import Coin
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
 from chia.types.blockchain_format.sub_epoch_summary import SubEpochSummary
 from chia.util.ints import uint8, uint32, uint64, uint128
 from chia.util.streamable import Streamable, streamable
@@ -35,6 +35,7 @@ class BlockRecord(Streamable):
     reward_infusion_new_challenge: bytes32  # The reward chain infusion output, input to next VDF
     challenge_block_info_hash: bytes32  # Hash of challenge chain data, used to validate end of slots in the future
     sub_slot_iters: uint64  # Current network sub_slot_iters parameter
+    coinbase: bytes20
     pool_puzzle_hash: bytes32  # Need to keep track of these because Coins are created in a future block
     farmer_puzzle_hash: bytes32
     required_iters: uint64  # The number of iters required for this proof of space
@@ -45,6 +46,10 @@ class BlockRecord(Streamable):
     # Transaction block (present iff is_transaction_block)
     timestamp: Optional[uint64]
     prev_transaction_block_hash: Optional[bytes32]  # Header hash of the previous transaction block
+    execution_block_height: Optional[uint64]
+    execution_block_hash: Optional[bytes32]
+    last_withdrawal_index: Optional[uint64]
+    execution_timestamp: Optional[uint64]
     fees: Optional[uint64]
     reward_claims_incorporated: Optional[List[Coin]]
 

@@ -38,6 +38,7 @@ def get_block_header(block: FullBlock, tx_addition_coins: List[Coin], removals_n
         block.foliage_transaction_block,
         encoded_filter,
         block.transactions_info,
+        block.execution_payload,
     )
 
 
