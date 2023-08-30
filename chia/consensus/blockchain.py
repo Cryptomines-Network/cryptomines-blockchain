@@ -577,8 +577,8 @@ class Blockchain(BlockchainInterface):
             block.reward_chain_sp_proof,
             block.foliage,
             block.foliage_transaction_block,
-            block.execution_payload,
             b"",
+            block.execution_payload,
         )
         prev_b = self.try_block_record(unfinished_header_block.prev_header_hash)
         sub_slot_iters, difficulty = get_next_sub_slot_iters_and_difficulty(
