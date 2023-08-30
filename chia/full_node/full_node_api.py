@@ -1017,7 +1017,7 @@ class FullNodeAPI:
             await self.full_node.respond_unfinished_block(request, None, True)
         except Exception as e:
             # If we have an error with this block, try making an empty block
-            self.full_node.log.error(f"Error farming block {e} {request}")
+            self.full_node.log.error(f"Error farming block {e} {traceback.format_exc()} {request}")
             candidate_tuple = self.full_node.full_node_store.get_candidate_block(
                 farmer_request.quality_string, backup=True
             )
