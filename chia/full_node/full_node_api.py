@@ -900,6 +900,7 @@ class FullNodeAPI:
                 ip_iters,
                 request.proof_of_space,
                 cc_challenge_hash,
+                bytes20.from_hexstr(self.full_node.config["coinbase"]),
                 farmer_ph,
                 pool_target,
                 get_plot_sig,
@@ -940,6 +941,7 @@ class FullNodeAPI:
             if unfinished_block.is_transaction_block() and unfinished_block.transactions_generator is not None:
                 unfinished_block_backup = create_unfinished_block(
                     self.full_node.constants,
+                    self.full_node.execution_client,
                     total_iters_pos_slot,
                     sub_slot_iters,
                     request.signage_point_index,
@@ -947,9 +949,9 @@ class FullNodeAPI:
                     ip_iters,
                     request.proof_of_space,
                     cc_challenge_hash,
+                    bytes20.from_hexstr(self.full_node.config["coinbase"]),
                     farmer_ph,
                     pool_target,
-                    bytes20.from_hexstr(self.full_node.config["coinbase"]),
                     get_plot_sig,
                     get_pool_sig,
                     sp_vdfs,
