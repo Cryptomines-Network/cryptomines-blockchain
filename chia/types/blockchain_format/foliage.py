@@ -7,7 +7,7 @@ from blspy import G2Element
 
 from chia.types.blockchain_format.coin import Coin
 from chia.types.blockchain_format.pool_target import PoolTarget
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
 from chia.util.ints import uint64
 from chia.util.streamable import Streamable, streamable
 
@@ -34,6 +34,7 @@ class FoliageTransactionBlock(Streamable):
     additions_root: bytes32
     removals_root: bytes32
     transactions_info_hash: bytes32
+    execution_block_hash: bytes32
 
 
 @streamable
@@ -41,6 +42,7 @@ class FoliageTransactionBlock(Streamable):
 class FoliageBlockData(Streamable):
     # Part of the block that is signed by the plot key
     unfinished_reward_block_hash: bytes32
+    coinbase: bytes20
     pool_target: PoolTarget
     pool_signature: Optional[G2Element]  # Iff ProofOfSpace has a pool pk
     farmer_reward_puzzle_hash: bytes32
