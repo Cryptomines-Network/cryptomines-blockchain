@@ -96,12 +96,12 @@ def _calculate_v3_reward(
     v3_height: uint64 
 ) -> uint64:
     if v3_height < 2 * _blocks_per_year:
-        return uint64(1 * _mojo_per_chia)
+        return uint64(1 * _bpx_to_gwei)
     elif v3_height < 5 * _blocks_per_year:
-        return uint64(0.5 * _mojo_per_chia)
+        return uint64(0.5 * _bpx_to_gwei)
     elif v3_height < 8 * _blocks_per_year:
-        return uint64(0.25 * _mojo_per_chia)
+        return uint64(0.25 * _bpx_to_gwei)
     elif v3_height < 11 * _blocks_per_year:
-        return uint64(0.125 * _mojo_per_chia)
+        return uint64(0.125 * _bpx_to_gwei)
     else:
-        return uint64(0.0625 * _mojo_per_chia)
+        return uint64(0.0625 * _bpx_to_gwei)
