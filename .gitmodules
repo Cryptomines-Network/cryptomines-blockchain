@@ -2,7 +2,3 @@
 	path = mozilla-ca
 	url = https://github.com/Chia-Network/mozilla-ca.git
         branch = main
-[submodule "cryptomines-blockchain-gui"]
-	path = cryptomines-blockchain-gui
-	url = https://github.com/Cryptomines-Network/cryptomines-blockchain-gui.git
-		branch = main
