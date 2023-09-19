@@ -901,7 +901,7 @@ def validate_unfinished_header_block(
             return None, ValidationError(Err.INVALID_BLOCK_NUMBER)
 
         # 32a. The timestamp must not be over 15 seconds in the future
-        if header_block.execution_payload.timestamp > int(time.time() + constants.MAX_FUTURE_TIME):
+        if header_block.execution_payload.timestamp > int(time.time() + constants.MAX_FUTURE_TIME2):
             return None, ValidationError(Err.TIMESTAMP_TOO_FAR_IN_FUTURE)
 
         # 32b. The timestamp must be greater than the previous block timestamp
