@@ -135,7 +135,6 @@ All notable changes to this project will be documented in this file.
 - Return fee estimates as integer mojos
 - Activate the soft-fork and soft-fork2 earlier on testnet10
 - Bump chia_rs to 0.2.7
-- Lower MAX_FUTURE_TIME to 2 minutes with the 1.8.0 soft-fork activation
 - List the columns for `INSERT` into `coin_record`
 - Remove legacy keyring support
 - Drop support for bladebit v1 and use bladebit v2 for RAM and Disk plots

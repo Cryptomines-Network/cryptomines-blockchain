@@ -13,7 +13,7 @@ from chia.consensus.block_record import BlockRecord
 from chia.types.blockchain_format.classgroup import ClassgroupElement
 from chia.types.blockchain_format.coin import Coin
 from chia.types.blockchain_format.serialized_program import SerializedProgram
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
 from chia.types.blockchain_format.sub_epoch_summary import SubEpochSummary
 from chia.types.full_block import FullBlock
 from chia.types.weight_proof import SubEpochChallengeSegment, SubEpochSegments
@@ -52,6 +52,7 @@ class BlockRecordDB(Streamable):
     reward_infusion_new_challenge: bytes32
     challenge_block_info_hash: bytes32
     sub_slot_iters: uint64
+    coinbase: bytes20
     pool_puzzle_hash: bytes32
     farmer_puzzle_hash: bytes32
     required_iters: uint64
@@ -60,6 +61,10 @@ class BlockRecordDB(Streamable):
     prev_transaction_block_height: uint32
     timestamp: Optional[uint64]
     prev_transaction_block_hash: Optional[bytes32]
+    execution_block_height: Optional[uint64]
+    execution_block_hash: Optional[bytes32]
+    last_withdrawal_index: Optional[uint64]
+    execution_timestamp: Optional[uint64]
     fees: Optional[uint64]
     reward_claims_incorporated: Optional[List[Coin]]
     finished_challenge_slot_hashes: Optional[List[bytes32]]
@@ -80,6 +85,7 @@ class BlockRecordDB(Streamable):
             reward_infusion_new_challenge=self.reward_infusion_new_challenge,
             challenge_block_info_hash=self.challenge_block_info_hash,
             sub_slot_iters=self.sub_slot_iters,
+            coinbase=self.coinbase,
             pool_puzzle_hash=self.pool_puzzle_hash,
             farmer_puzzle_hash=self.farmer_puzzle_hash,
             required_iters=self.required_iters,
@@ -90,6 +96,10 @@ class BlockRecordDB(Streamable):
             cc_sp_hash=cc_sp_hash,
             timestamp=self.timestamp,
             prev_transaction_block_hash=self.prev_transaction_block_hash,
+            execution_block_height=self.execution_block_height,
+            execution_block_hash=self.execution_block_hash,
+            last_withdrawal_index=self.last_withdrawal_index,
+            execution_timestamp=self.execution_timestamp,
             fees=self.fees,
             reward_claims_incorporated=self.reward_claims_incorporated,
             finished_challenge_slot_hashes=self.finished_challenge_slot_hashes,
@@ -112,6 +122,7 @@ class BlockRecordDB(Streamable):
             reward_infusion_new_challenge=block_record.reward_infusion_new_challenge,
             challenge_block_info_hash=block_record.challenge_block_info_hash,
             sub_slot_iters=block_record.sub_slot_iters,
+            coinbase=block_record.coinbase,
             pool_puzzle_hash=block_record.pool_puzzle_hash,
             farmer_puzzle_hash=block_record.farmer_puzzle_hash,
             required_iters=block_record.required_iters,
@@ -120,6 +131,10 @@ class BlockRecordDB(Streamable):
             prev_transaction_block_height=block_record.prev_transaction_block_height,
             timestamp=block_record.timestamp,
             prev_transaction_block_hash=block_record.prev_transaction_block_hash,
+            execution_block_height=block_record.execution_block_height,
+            execution_block_hash=block_record.execution_block_hash,
+            last_withdrawal_index=block_record.last_withdrawal_index,
+            execution_timestamp=block_record.execution_timestamp,
             fees=block_record.fees,
             reward_claims_incorporated=block_record.reward_claims_incorporated,
             finished_challenge_slot_hashes=block_record.finished_challenge_slot_hashes,
