@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import asyncio
 import time
+import traceback
 
 from typing import (
     Optional,
@@ -270,7 +271,7 @@ class ExecutionClient:
         if synced:
             coinbase = self.full_node.config["coinbase"]
             if bytes20.from_hexstr(coinbase) == COINBASE_NULL:
-                log.warning("Coinbase not set! Farming not possible!")
+                log.warning(f"Coinbase not set! Farming not possible! {traceback.format_exc()}")
             else:
                 payload_attributes = self._create_payload_attributes(block, coinbase)
         
@@ -288,7 +289,7 @@ class ExecutionClient:
             self.payload_id = result.payloadId
             log.info(f"Payload building started, id: {self.payload_id}")
         else:
-            log.warning(f"Payload building not started")
+            log.warning(f"Payload building not started {traceback.format_exc()}")
         
         return result.payloadStatus.status
     
