@@ -2207,7 +2207,7 @@ def create_test_unfinished_block(
         additions = []
     if removals is None:
         removals = []
-    (foliage, foliage_transaction_block, transactions_info, execution_payload) = create_test_foliage(
+    (foliage, foliage_transaction_block, transactions_info) = create_test_foliage(
         constants,
         rc_block,
         block_generator,
@@ -2234,7 +2234,6 @@ def create_test_unfinished_block(
         transactions_info,
         block_generator.program if block_generator else None,
         block_generator.block_height_list if block_generator else [],
-        execution_payload,
     )
 
 
@@ -2307,5 +2306,4 @@ def make_unfinished_block(block: FullBlock, constants: ConsensusConstants) -> Un
         block.transactions_info,
         block.transactions_generator,
         block.transactions_generator_ref_list,
-        block.execution_payload,
     )

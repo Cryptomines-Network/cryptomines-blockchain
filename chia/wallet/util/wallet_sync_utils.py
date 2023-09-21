@@ -342,7 +342,6 @@ def get_block_header(block: FullBlock) -> HeaderBlock:
         block.foliage_transaction_block,
         b"",  # we don't need the filter
         block.transactions_info,
-        block.execution_payload,
     )
 
 
