@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import asyncio
 import time
-import traceback
 
 from typing import (
     Optional,
@@ -24,6 +23,7 @@ from chia.util.ints import uint64, uint256
 from chia.types.blockchain_format.execution_payload import ExecutionPayloadV2, WithdrawalV1
 from chia.util.byte_types import hexstr_to_bytes
 from chia.consensus.block_rewards import create_withdrawals
+from chia.full_node.full_node import FullNode
 
 COINBASE_NULL = bytes20.fromhex("0000000000000000000000000000000000000000")
 BLOCK_HASH_NULL = bytes32.fromhex("0000000000000000000000000000000000000000000000000000000000000000")
@@ -66,7 +66,7 @@ class EngineModule(Module):
     new_payload_v2 = Method("engine_newPayloadV2")
 
 class ExecutionClient:
-    full_node: Full_node
+    full_node: FullNode
     w3: Web3
     peak_txb_hash: Optional[bytes32]
     payload_id: Optional[str]
@@ -271,7 +271,7 @@ class ExecutionClient:
         if synced:
             coinbase = self.full_node.config["coinbase"]
             if bytes20.from_hexstr(coinbase) == COINBASE_NULL:
-                log.warning(f"Coinbase not set! Farming not possible! {traceback.format_exc()}")
+                log.warning("Coinbase not set! Farming not possible!")
             else:
                 payload_attributes = self._create_payload_attributes(block, coinbase)
         
@@ -289,7 +289,7 @@ class ExecutionClient:
             self.payload_id = result.payloadId
             log.info(f"Payload building started, id: {self.payload_id}")
         else:
-            log.warning(f"Payload building not started {traceback.format_exc()}")
+            log.warning("Payload building not started")
         
         return result.payloadStatus.status
     
