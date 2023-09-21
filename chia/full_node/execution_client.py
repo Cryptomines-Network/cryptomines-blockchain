@@ -23,7 +23,6 @@ from chia.util.ints import uint64, uint256
 from chia.types.blockchain_format.execution_payload import ExecutionPayloadV2, WithdrawalV1
 from chia.util.byte_types import hexstr_to_bytes
 from chia.consensus.block_rewards import create_withdrawals
-from chia.full_node.full_node import FullNode
 
 COINBASE_NULL = bytes20.fromhex("0000000000000000000000000000000000000000")
 BLOCK_HASH_NULL = bytes32.fromhex("0000000000000000000000000000000000000000000000000000000000000000")
