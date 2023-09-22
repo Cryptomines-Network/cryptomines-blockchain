@@ -52,7 +52,6 @@ from chia.util.inline_executor import InlineExecutor
 from chia.util.ints import uint16, uint32, uint64, uint128
 from chia.util.priority_mutex import PriorityMutex
 from chia.util.setproctitle import getproctitle, setproctitle
-from chia.full_node.execution_client import ExecutionClient
 
 log = logging.getLogger(__name__)
 
