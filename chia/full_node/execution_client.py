@@ -18,6 +18,7 @@ from hexbytes import HexBytes
 
 from chia.util.path import path_from_root
 from chia.consensus.block_record import BlockRecord
+from chia.full_node.full_node import FullNode
 from chia.types.blockchain_format.sized_bytes import bytes20, bytes32, bytes256
 from chia.util.ints import uint64, uint256
 from chia.types.blockchain_format.execution_payload import ExecutionPayloadV2, WithdrawalV1
