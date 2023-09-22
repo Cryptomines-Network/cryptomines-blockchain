@@ -4,7 +4,7 @@ import dataclasses
 import logging
 from typing import Any
 
-from chia.types.blockchain_format.sized_bytes import bytes20, bytes32
+from chia.types.blockchain_format.sized_bytes import bytes32
 from chia.util.byte_types import hexstr_to_bytes
 from chia.util.ints import uint8, uint32, uint64, uint128
 
