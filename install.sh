@@ -44,93 +44,6 @@ do
   esac
 done
 
-UBUNTU=false
-DEBIAN=false
-if [ "$(uname)" = "Linux" ]; then
-  #LINUX=1
-  if command -v apt-get >/dev/null; then
-    OS_ID=$(lsb_release -is)
-    if [ "$OS_ID" = "Debian" ]; then
-      DEBIAN=true
-    else
-      UBUNTU=true
-    fi
-  fi
-fi
-
-# Check for non 64 bit ARM64/Raspberry Pi installs
-if [ "$(uname -m)" = "armv7l" ]; then
-  echo ""
-  echo "WARNING:"
-  echo "The Cryptomines Blockchain requires a 64 bit OS and this is 32 bit armv7l"
-  echo "For more information, see"
-  echo "https://github.com/Cryptomines-Network/cryptomines-blockchain/wiki/Raspberry-Pi"
-  echo "Exiting."
-  exit 1
-fi
-# Get submodules
-git submodule update --init mozilla-ca
-
-UBUNTU_PRE_20=0
-UBUNTU_20=0
-
-if $UBUNTU; then
-  LSB_RELEASE=$(lsb_release -rs)
-  # In case Ubuntu minimal does not come with bc
-  if ! command -v bc > /dev/null 2>&1; then
-    sudo apt install bc -y
-  fi
-  # Mint 20.04 responds with 20 here so 20 instead of 20.04
-  if [ "$(echo "$LSB_RELEASE<20" | bc)" = "1" ]; then
-    UBUNTU_PRE_20=1
-  else
-    UBUNTU_20=1
-  fi
-fi
-
-install_python3_and_sqlite3_from_source_with_yum() {
-  CURRENT_WD=$(pwd)
-  TMP_PATH=/tmp
-
-  # Preparing installing Python
-  echo 'yum groupinstall -y "Development Tools"'
-  sudo yum groupinstall -y "Development Tools"
-  echo "sudo yum install -y openssl-devel openssl libffi-devel bzip2-devel wget"
-  sudo yum install -y openssl-devel openssl libffi-devel bzip2-devel wget
-
-  echo "cd $TMP_PATH"
-  cd "$TMP_PATH"
-  # Install sqlite>=3.37
-  # yum install sqlite-devel brings sqlite3.7 which is not compatible with cryptomines
-  echo "wget https://www.sqlite.org/2022/sqlite-autoconf-3370200.tar.gz"
-  wget https://www.sqlite.org/2022/sqlite-autoconf-3370200.tar.gz
-  tar xf sqlite-autoconf-3370200.tar.gz
-  echo "cd sqlite-autoconf-3370200"
-  cd sqlite-autoconf-3370200
-  echo "./configure --prefix=/usr/local"
-  # '| stdbuf ...' seems weird but this makes command outputs stay in single line.
-  ./configure --prefix=/usr/local | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
-  echo "make -j$(nproc)"
-  make -j"$(nproc)" | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
-  echo "sudo make install"
-  sudo make install | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
-  # yum install python3 brings Python3.6 which is not supported by cryptomines
-  cd ..
-  echo "wget https://www.python.org/ftp/python/3.9.11/Python-3.9.11.tgz"
-  wget https://www.python.org/ftp/python/3.9.11/Python-3.9.11.tgz
-  tar xf Python-3.9.11.tgz
-  echo "cd Python-3.9.11"
-  cd Python-3.9.11
-  echo "LD_RUN_PATH=/usr/local/lib ./configure --prefix=/usr/local"
-  # '| stdbuf ...' seems weird but this makes command outputs stay in single line.
-  LD_RUN_PATH=/usr/local/lib ./configure --prefix=/usr/local | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
-  echo "LD_RUN_PATH=/usr/local/lib make -j$(nproc)"
-  LD_RUN_PATH=/usr/local/lib make -j"$(nproc)" | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
-  echo "LD_RUN_PATH=/usr/local/lib sudo make altinstall"
-  LD_RUN_PATH=/usr/local/lib sudo make altinstall | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
-  cd "$CURRENT_WD"
-}
-
 # You can specify preferred python version by exporting `INSTALL_PYTHON_VERSION`
 # e.g. `export INSTALL_PYTHON_VERSION=3.8`
 INSTALL_PYTHON_PATH=
@@ -184,27 +97,76 @@ find_openssl() {
   set -e
 }
 
+install_python3_and_sqlite3_from_source_with_yum() {
+  CURRENT_WD=$(pwd)
+  TMP_PATH=/tmp
+
+  # Preparing installing Python
+  echo 'yum groupinstall -y "Development Tools"'
+  sudo yum groupinstall -y "Development Tools"
+  echo "sudo yum install -y openssl-devel openssl libffi-devel bzip2-devel wget"
+  sudo yum install -y openssl-devel openssl libffi-devel bzip2-devel wget
+
+  echo "cd $TMP_PATH"
+  cd "$TMP_PATH"
+  # Install sqlite>=3.37
+  # yum install sqlite-devel brings sqlite3.7 which is not compatible with cryptomines
+  echo "wget https://www.sqlite.org/2022/sqlite-autoconf-3370200.tar.gz"
+  wget https://www.sqlite.org/2022/sqlite-autoconf-3370200.tar.gz
+  tar xf sqlite-autoconf-3370200.tar.gz
+  echo "cd sqlite-autoconf-3370200"
+  cd sqlite-autoconf-3370200
+  echo "./configure --prefix=/usr/local"
+  # '| stdbuf ...' seems weird but this makes command outputs stay in single line.
+  ./configure --prefix=/usr/local | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+  echo "make -j$(nproc)"
+  make -j"$(nproc)" | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+  echo "sudo make install"
+  sudo make install | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+  # yum install python3 brings Python3.6 which is not supported by cryptomines
+  cd ..
+  echo "wget https://www.python.org/ftp/python/3.9.11/Python-3.9.11.tgz"
+  wget https://www.python.org/ftp/python/3.9.11/Python-3.9.11.tgz
+  tar xf Python-3.9.11.tgz
+  echo "cd Python-3.9.11"
+  cd Python-3.9.11
+  echo "LD_RUN_PATH=/usr/local/lib ./configure --prefix=/usr/local"
+  # '| stdbuf ...' seems weird but this makes command outputs stay in single line.
+  LD_RUN_PATH=/usr/local/lib ./configure --prefix=/usr/local | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+  echo "LD_RUN_PATH=/usr/local/lib make -j$(nproc)"
+  LD_RUN_PATH=/usr/local/lib make -j"$(nproc)" | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+  echo "LD_RUN_PATH=/usr/local/lib sudo make altinstall"
+  LD_RUN_PATH=/usr/local/lib sudo make altinstall | stdbuf -o0 cut -b1-"$(tput cols)" | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+  cd "$CURRENT_WD"
+}
+
+
+
+
+# Check for non 64 bit ARM64/Raspberry Pi installs
+if [ "$(uname -m)" = "armv7l" ]; then
+  echo ""
+  echo "WARNING:"
+  echo "The Cryptomines Blockchain requires a 64 bit OS and this is 32 bit armv7l"
+  echo "Exiting."
+  exit 1
+fi
+
+# Get submodules
+git submodule update --init mozilla-ca
 # Manage npm and other install requirements on an OS specific basis
 if [ "$SKIP_PACKAGE_INSTALL" = "1" ]; then
   echo "Skipping system package installation"
 elif [ "$(uname)" = "Linux" ]; then
   #LINUX=1
-  if [ "$UBUNTU_PRE_20" = "1" ]; then
-    # Ubuntu
-    echo "Installing on Ubuntu pre 20.*."
+  if type apt-get >/dev/null 2>&1; then
+    # Ubuntu or Debian
+    echo "Installing on Ubuntu or Debian"
     sudo apt-get update
     # distutils must be installed as well to avoid a complaint about ensurepip while
     # creating the venv.  This may be related to a mis-check while using or
     # misconfiguration of the secondary Python version 3.7.  The primary is Python 3.6.
-    sudo apt-get install -y python3.7-venv python3.7-distutils openssl
-  elif [ "$UBUNTU_20" = "1" ]; then
-    echo "Installing on Ubuntu 20.* or newer."
-    sudo apt-get update
-    sudo apt-get install -y python3-venv openssl
-  elif [ "$DEBIAN" = "true" ]; then
-    echo "Installing on Debian."
-    sudo apt-get update
-    sudo apt-get install -y python3-venv openssl
+    sudo apt-get install -y python-venv python-distutils openssl bc
   elif type pacman >/dev/null 2>&1 && [ -f "/etc/arch-release" ]; then
     # Arch Linux
     # Arch provides latest python version. User will need to manually install python 3.9 if it is not present
@@ -351,9 +313,8 @@ fi
 
 echo ""
 echo "Cryptomines blockchain install.sh complete."
-echo ""
-echo "Try the Quick Start Guide to running cryptomines-blockchain:"
-echo "https://github.com/Cryptomines-Network/cryptomines-blockchain/wiki/Quick-Start-Guide"
+echo "For assistance join us on Discord in the #support chat channel:"
+echo "https://discord.gg/"
 echo ""
 echo "To install the GUI run '. ./activate' then 'sh install-gui.sh'."
 echo ""

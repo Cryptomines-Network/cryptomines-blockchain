@@ -6,6 +6,7 @@ USAGE_TEXT="\
 Usage: $0 [-d]
 
   -n                          do not install Python development package, Python.h etc
+  -c                          skip cmake instalation
   -h                          display this help and exit
 "
 
@@ -20,13 +21,14 @@ do
   case "${flag}" in
     # development
     n) INSTALL_PYTHON_DEV=;;
+	c) SKIP_CMAKE_INSTALL=1;;
     h) usage; exit 0;;
     *) echo; usage; exit 1;;
   esac
 done
 
 if [ -z "$VIRTUAL_ENV" ]; then
-  echo "This requires the chia python virtual environment."
+  echo "This requires the cryptomines python virtual environment."
   echo "Execute '. ./activate' before running."
 	exit 1
 fi
@@ -100,7 +102,11 @@ else
 	if [ -e venv/bin/python ] && test "$UBUNTU_DEBIAN"; then
 		echo "Installing chiavdf dependencies on Ubuntu/Debian"
 		# If Ubuntu version is older than 20.04LTS then upgrade CMake
-		ubuntu_cmake_install
+		if ["$SKIP_CMAKE_INSTALL"="1"]; then
+			echo "Skipping cmake installation"
+		else
+			ubuntu_cmake_install
+		fi
 		# Install remaining needed development tools - assumes venv and prior run of install.sh
 		echo "apt-get install libgmp-dev libboost-python-dev $PYTHON_DEV_DEPENDENCY libboost-system-dev build-essential -y"
 		sudo apt-get install libgmp-dev libboost-python-dev "$PYTHON_DEV_DEPENDENCY" libboost-system-dev build-essential -y
