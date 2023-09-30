@@ -166,7 +166,7 @@ elif [ "$(uname)" = "Linux" ]; then
     # distutils must be installed as well to avoid a complaint about ensurepip while
     # creating the venv.  This may be related to a mis-check while using or
     # misconfiguration of the secondary Python version 3.7.  The primary is Python 3.6.
-    sudo apt-get install -y python-venv python-distutils openssl bc
+    sudo apt-get install -y python3-venv python3-distutils openssl bc
   elif type pacman >/dev/null 2>&1 && [ -f "/etc/arch-release" ]; then
     # Arch Linux
     # Arch provides latest python version. User will need to manually install python 3.9 if it is not present
