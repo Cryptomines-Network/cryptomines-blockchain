@@ -10,7 +10,7 @@
 
 2. Download repository with submodules.
 
-        git clone https://github.com/UrodaMarek/cryptomines-blockchain.git --recurse-submodules
+        git https://github.com/Cryptomines-Network/cryptomines-blockchain.git --recurse-submodules
 
 3. Go to "./cryptomines-blockchain".
 
